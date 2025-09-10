@@ -19,27 +19,40 @@ package com.cloudrun.microservicetemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
-/** Example REST controller to demonstrate structured logging. */
-@RestController
+/** Portfolio and Resume Landing Page Controller. */
+@Controller
 public class MicroserviceController {
   // 'spring-cloud-gcp-starter-logging' module provides support for
   // associating a web request trace ID with the corresponding log entries.
   // https://cloud.spring.io/spring-cloud-gcp/multi/multi__stackdriver_logging.html
   private static final Logger logger = LoggerFactory.getLogger(MicroserviceController.class);
 
-  /** Example endpoint handler. */
+  /** Landing page endpoint handler. */
   @GetMapping("/")
-  public @ResponseBody String index() {
+  public String index(Model model) {
     // Example of structured logging - add custom fields
-    MDC.put("logField", "custom-entry");
-    MDC.put("arbitraryField", "custom-entry");
+    MDC.put("logField", "portfolio-access");
+    MDC.put("arbitraryField", "landing-page");
     // Use logger with log correlation
     // https://cloud.google.com/run/docs/logging#correlate-logs
-    logger.info("Structured logging example.");
-    return "Hello World!";
+    logger.info("Portfolio landing page accessed.");
+    
+    // Add data to the model for the template
+    model.addAttribute("name", "Philip");
+    model.addAttribute("title", "Software Developer & Engineer");
+    model.addAttribute("location", "Georgia Tech");
+    
+    return "index";
+  }
+  
+  /** API endpoint for basic health check. */
+  @GetMapping("/api/health")
+  public @ResponseBody String health() {
+    return "OK";
   }
 }
